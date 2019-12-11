@@ -1,34 +1,40 @@
 import sys
+import os
 
-all_nums = []
+HADOOP_CMD="/opt/hadoop-3.1.3/bin/hadoop"
+HDFS_CMD="/opt/hadoop-3.1.3/bin/hdfs"
+STREAM_JAR_PATH="/opt/hadoop-3.1.3/share/hadoop/tools/lib/hadoop-streaming-3.1.3.jar"
+
+
+INPUT_FILE_PATH_1="/root/hadoop-test/"
+CENTET_POINTS_FILE="CENTET_POINTS.txt"
+LABELS_FILE="LABELS.txt"
+
+OUTPUT_PATH="/output"
+
+cmd = "%s dfs -cat %sinput/data.txt" % (HDFS_CMD, INPUT_FILE_PATH_1)
+# `/root/hadoop-test/input/data.txt
+data = os.popen(cmd)
+data = [[
+        float(j) 
+        for j in i.split(',')
+    ] 
+    for i in data.read().strip().split(' ')
+]
+
+k = 3
+
+new_center_point = [[0, 0] for i in range(k)]
+
 
 for line in sys.stdin:
-    kvs = line.strip().split()
-    kvs = [int(i) for i in kvs]
-    if not all_nums:
-        all_nums.append(kvs)
-    else:
-        # print('all_nums', all_nums)
-        l1 = all_nums.pop()
-        l2 = kvs
+    labels = line.strip().split()
+    for d, label in zip(data, labels):
+        label = int(label)
+        new_center_point[label][0] += d[0]
+        new_center_point[label][1] += d[1]
+for i in range(k):
+    new_center_point[i][0] /= len(data)
+    new_center_point[i][1] /= len(data)
 
-        new_nums = []
-        index1 = 0
-        index2 = 0
-        while index1 < len(l1) and index2 < len(l2):
-            a = l1[index1]
-            b = l2[index2]
-            if a < b:
-                new_nums.append(a)
-                index1 += 1
-            else:
-                new_nums.append(b)
-                index2 += 1
-
-        if index1 == len(l1) and index2 < len(l2):
-            new_nums.extend(l2[index2: ])
-        if index1 < len(l1) and index2 == len(l2):
-            new_nums.extend(l1[index1: ])
-
-        all_nums.append(new_nums)
-print(all_nums[0])
+print(" ".join(["%.16f,%.16f"%tuple(i) for i in new_center_point]))
