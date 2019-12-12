@@ -5,7 +5,7 @@ from sklearn.datasets import make_blobs
 
 X, Y = make_blobs(
     n_samples=1000, n_features=2, 
-    centers=[[-0.3, -0.3], [0, 0], [0.3, 0.3]], 
+    centers=[[-1, -1], [0, 0], [1, 1]], 
     cluster_std=[0.01, 0.02, 0.03]
 )
 points = []

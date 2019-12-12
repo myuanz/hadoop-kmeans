@@ -20,7 +20,7 @@ $HDFS_CMD dfs -put ./$LABELS_FILE $INPUT_FILE_PATH_1$LABELS_FILE
 $HDFS_CMD dfs -put $INPUT_FILE_PATH_1/input $INPUT_FILE_PATH_1/input
 
 
-for i in {1..3}
+for i in {1..10}
 do
     echo 第$i次
     $HDFS_CMD dfs -rm -r -skipTrash $OUTPUT_PATH
